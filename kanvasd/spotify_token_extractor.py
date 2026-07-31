@@ -3,29 +3,7 @@
 Extract the Spotify desktop app's Bearer token via the Chrome DevTools
 Protocol (CDP). Spotify's Linux client is CEF/Electron-based, so it
 supports the same --remote-debugging-port flag as Chrome.
-
-SETUP
------
-1. Fully quit Spotify.
-2. Launch it with remote debugging enabled:
-
-       spotify --remote-debugging-port=9222
-
-   (If `spotify` isn't on PATH, use whatever binary/AppImage you normally
-   run, e.g. `/usr/bin/spotify --remote-debugging-port=9222` or the
-   flatpak equivalent: `flatpak run com.spotify.Client --remote-debugging-port=9222`)
-
-3. Install deps:
-
-       pip install requests websocket-client
-
-4. Run this script, then interact with Spotify a bit (switch tabs, load
-   a playlist, etc.) so it fires a request to spclient — that's what
-   carries the Authorization header.
-
-       python3 spotify_token_extractor.py
 """
-
 import json
 import time
 import sys
