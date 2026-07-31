@@ -45,13 +45,7 @@ CANVAS_DIR = CACHE_DIR / "canvases"
 CURRENT_CANVAS = CACHE_DIR / "current.mp4"   # fixed path QML watches
 
 def resolve_bun_path() -> str:
-    """
-    Find the bun executable without trusting ambient PATH - a systemd
-    --user service gets its own minimal environment and never sources
-    .bashrc/.bash_profile, so "just add it to PATH in your shell config"
-    (what the official Bun installer does) doesn't reach it. Checked, in
-    order: $PATH, then the official installer's default location.
-    """
+   # find the bun executable
     from_path = shutil.which("bun")
     if from_path:
         return from_path
@@ -193,18 +187,11 @@ async def on_track_changed(track_id: str):
     if result is None:
         print("[canvas] none available for this track")
         # Clear any previous track's canvas so the widget falls back to
-        # album art instead of showing a stale video.
+        # album art instead of showing a stale video
         if CURRENT_CANVAS.exists() or CURRENT_CANVAS.is_symlink():
             CURRENT_CANVAS.unlink()
         return
-
-    # Delete-then-recreate rather than an atomic rename over the existing
-    # name. QML's FolderListModel (what the widget watches) only notices a
-    # row being added or removed - an in-place rename onto an existing
-    # filename doesn't change its row count, so it was never told to
-    # reload when going straight from one canvas to another. This trades
-    # a few-millisecond gap (file briefly absent) for a reliable 0->1
-    # transition the watcher can actually see.
+        # boring atomic stuff
     if CURRENT_CANVAS.exists() or CURRENT_CANVAS.is_symlink():
         CURRENT_CANVAS.unlink()
     CURRENT_CANVAS.symlink_to(result)
@@ -289,7 +276,7 @@ async def main():
     props.on_properties_changed(on_properties_changed)
 
     print("kanvasd running. Watching Spotify MPRIS for track changes...")
-    await asyncio.Event().wait()  # run forever
+    await asyncio.Event().wait()  # run forever, or until it fails
 
 
 if __name__ == "__main__":
