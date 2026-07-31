@@ -41,6 +41,7 @@ it. Either half can be replaced independently.
 ```sh
 git clone https://github.com/KenzieOSS/KanvasPlayer/
 cd KanvasPlayer
+chmod +x install.sh
 ./install.sh
 ```
 
