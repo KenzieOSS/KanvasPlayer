@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 KenzieOSS
+# SPDX-License-Identifier: GPL-3.0-only
 #
 # Installs kanvasd (backend) + KanvasPlayer (Plasma widget).
 #
@@ -37,6 +39,13 @@ fail()  { echo -e "\033[1;31mERROR:\033[0m $*" >&2; exit 1; }
 info "Checking for required system components..."
 
 command -v python3 >/dev/null 2>&1 || fail "python3 not found. Install Python 3.11+ via your distro's package manager first."
+
+python3 -m ensurepip --version >/dev/null 2>&1 || python3 -m pip --version >/dev/null 2>&1 || fail \
+"python3 was found, but pip isn't available for it (checked 'python3 -m ensurepip' and 'python3 -m pip').
+Some distros ship these separately from the base python3 package. Install it first, e.g.:
+  Arch:          sudo pacman -S python-pip
+  Fedora:        sudo dnf install python3-pip
+  Debian/Ubuntu: sudo apt install python3-pip python3-venv"
 
 command -v kpackagetool6 >/dev/null 2>&1 || fail \
 "kpackagetool6 not found - this means KDE Plasma 6 (libplasma) isn't installed, or isn't on PATH.
@@ -85,6 +94,13 @@ cp "$REPO_DIR/kanvasd/kanvasd.py" \
 
 info "Creating venv and installing Python dependencies..."
 python3 -m venv "$KANVASD_DIR/.venv"
+
+[ -x "$KANVASD_DIR/.venv/bin/pip" ] || fail \
+"The venv was created but has no pip in it ($KANVASD_DIR/.venv/bin/pip missing).
+This usually means pip needs to be installed separately for python3 on
+this system - see the pip check earlier in this script's output for
+the exact command for your distro, then re-run this installer."
+
 "$KANVASD_DIR/.venv/bin/pip" install --quiet --upgrade pip
 "$KANVASD_DIR/.venv/bin/pip" install --quiet -r "$KANVASD_DIR/requirements.txt"
 
