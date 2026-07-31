@@ -164,7 +164,23 @@ patch_spotify_desktop() {
         fi
     fi
 
+    if ! grep -q -- "--remote-debugging-port" "$dest"; then
+        warn "Patch didn't take - $dest doesn't have the flags after editing."
+        warn "This shouldn't happen; please report it with the output of:"
+        warn "  grep ^Exec= \"$dest\""
+        return
+    fi
+
     update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
+    # update-desktop-database only refreshes the generic XDG MIME/desktop
+    # association cache (what e.g. xdg-open uses) - Plasma's own launcher
+    # (Kickoff/KRunner/taskbar) reads from KSycoca instead, which needs
+    # its own explicit rebuild or it'll keep serving the old cached entry
+    # even though the file on disk is already correctly patched.
+    command -v kbuildsycoca6 >/dev/null 2>&1 && kbuildsycoca6 --noincremental 2>/dev/null || true
+
+    info "Patched Exec line:"
+    grep ^Exec= "$dest"
     info "Spotify launcher configured: $dest"
 }
 
