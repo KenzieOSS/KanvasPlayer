@@ -163,27 +163,27 @@ PlasmoidItem {
         }
     ]
 
-    function previous(): void {
+    function previous() {
         if (mpris2Model.currentPlayer) {
             mpris2Model.currentPlayer.Previous();
         }
     }
-    function next(): void {
+    function next() {
         if (mpris2Model.currentPlayer) {
             mpris2Model.currentPlayer.Next();
         }
     }
-    function play(): void {
+    function play() {
         if (mpris2Model.currentPlayer) {
             mpris2Model.currentPlayer.Play();
         }
     }
-    function pause(): void {
+    function pause() {
         if (mpris2Model.currentPlayer) {
             mpris2Model.currentPlayer.Pause();
         }
     }
-    function togglePlaying(): void {
+    function togglePlaying() {
         if (mpris2Model.currentPlayer) {
             if (root.isPlaying) {
                 mpris2Model.currentPlayer.Pause();
@@ -192,17 +192,17 @@ PlasmoidItem {
             }
         }
     }
-    function stop(): void {
+    function stop() {
         if (mpris2Model.currentPlayer) {
             mpris2Model.currentPlayer.Stop();
         }
     }
-    function quit(): void {
+    function quit() {
         if (mpris2Model.currentPlayer) {
             mpris2Model.currentPlayer.Quit();
         }
     }
-    function raise(): void {
+    function raise() {
         if (mpris2Model.currentPlayer) {
             mpris2Model.currentPlayer.Raise();
         }
