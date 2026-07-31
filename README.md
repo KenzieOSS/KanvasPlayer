@@ -54,6 +54,10 @@ and [`plasmoid/README.md`](plasmoid/README.md) if you want the manual
 steps instead, or to see exactly what the installer is doing on your
 behalf before you run it.
 
+## Disclaimer
+The flags that Spotify needs for this to work cause a minor security flaw, allwoing any websocket to connect to Spotify's backend
+Also this project is quite fragile a single update from Spotify changing stuff about how canvases work can break it at any moment
+
 ## Requirements
 
 - KDE Plasma 6
