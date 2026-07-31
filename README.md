@@ -45,6 +45,8 @@ chmod +x install.sh
 ./install.sh
 ```
 
+If the widget does not work immediately after adding it somewhere, opening Spotify and starting a song a reboot should fix it
+
 That's genuinely most of it - it sets up the daemon, its systemd
 service, and the widget itself, and will offer to patch Spotify's
 launcher with the one flag it needs. See [`kanvasd/README.md`](kanvasd/README.md)
