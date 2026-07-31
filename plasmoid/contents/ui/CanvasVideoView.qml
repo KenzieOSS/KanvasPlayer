@@ -1,7 +1,7 @@
 /*
     SPDX-FileCopyrightText: 2026 KenzieOSS
 
-    SPDX-License-Identifier: GPL-2.0-or-later
+    SPDX-License-Identifier: GPL-3.0-only
 
     Displays the Spotify Canvas video fetched by kanvasd for the currently
     playing track. Not every track has a Canvas, so `hasVideo` reports
@@ -48,7 +48,7 @@ Item {
      * string hasn't changed - kanvasd may have replaced the file in place
      * (same path, new bytes) when a new track's canvas became ready.
      */
-    function reload(): void {
+    function reload() {
         player.stop();
         player.source = "";
         if (watcher.count > 0) {
@@ -63,7 +63,7 @@ Item {
 
     Connections {
         target: root
-        function onIsPlayingChanged(): void {
+        function onIsPlayingChanged() {
             if (!canvasView.hasVideo) {
                 return;
             }
