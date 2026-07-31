@@ -154,7 +154,7 @@ patch_spotify_desktop() {
     if [ "$kind" = "flatpak" ]; then
         # flatpak run passes extra args straight through to the app - insert
         # them right after the app id, before any @@ file-forwarding tokens.
-        sed -i -E "s/(com\.spotify\.Client)/\1 -- $SPOTIFY_FLAGS/" "$dest"
+        sed -i -E "s/(com\.spotify\.Client)/\1 $SPOTIFY_FLAGS/" "$dest"
     else
         # Native: insert before any %U/%u/%f/%F placeholder, else append.
         if grep -qE '%[UuFf]' "$dest"; then
