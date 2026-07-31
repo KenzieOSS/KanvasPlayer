@@ -39,6 +39,8 @@ it. Either half can be replaced independently.
 ## Install
 
 ```sh
+git clone https://github.com/KenzieOSS/KanvasPlayer/
+cd KanvasPlayer
 ./install.sh
 ```
 
