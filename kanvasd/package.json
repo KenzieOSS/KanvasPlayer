@@ -1,0 +1,12 @@
+{
+    "name": "mrn4txt",
+    "version": "1.0.0",
+    "description": "Fetches a Spotify Canvas video for a given track ID",
+    "type": "module",
+    "engines": {
+        "bun": ">=1.0.0"
+    },
+    "scripts": {
+        "fetch": "bun run mrn4txt.ts"
+    }
+}

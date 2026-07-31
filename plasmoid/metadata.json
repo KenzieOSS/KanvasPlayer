@@ -1,0 +1,29 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "KenzieOSS"
+            }
+        ],
+        "Category": "Multimedia",
+        "Description": "Media player controls with animated Spotify Canvas video in the expanded view",
+        "EnabledByDefault": true,
+        "FormFactors": [
+            "tablet",
+            "handset",
+            "desktop"
+        ],
+        "Icon": "applications-multimedia",
+        "Id": "io.github.KenzieOSS.kanvasplayer",
+        "License": "GPL-2.0+",
+        "Name": "KanvasPlayer",
+        "Website": "https://github.com/KenzieOSS/kanvasplayer"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-DBusActivationService": "org.mpris.MediaPlayer2.*",
+    "X-Plasma-NotificationAreaCategory": "SystemServices",
+    "X-Plasma-Provides": [
+        "org.kde.plasma.multimediacontrols"
+    ]
+}
