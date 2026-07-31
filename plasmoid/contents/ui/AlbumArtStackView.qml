@@ -38,7 +38,7 @@ Item {
 
     property Image pendingImage: null
 
-    function loadAlbumArt(): void {
+    function loadAlbumArt() {
         if (pendingImage !== null) {
             pendingImage.destroy();
             pendingImage = null;
@@ -56,7 +56,7 @@ Item {
             "opacity": 0,
         });
 
-        function replaceWhenLoaded(): void {
+        function replaceWhenLoaded() {
             // HACK: Workaround for QTBUG-140018 (see also: BUG 509192)
             // When a parent loader is inactive, it'll drop the engine from the context, but this can still run
             // afterwards which causes a crash in QQuickStackElement::initialize which asserts the engine is not null.
