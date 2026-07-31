@@ -5,7 +5,7 @@ for the currently playing track in its expanded view, instead of static
 album art. Falls back to album art automatically for tracks that don't
 have a Canvas.
 
-
+![KanvasPlayer demo](assets/demo.gif)
 
 ## What this actually is
 
