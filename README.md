@@ -7,7 +7,7 @@ have a Canvas.
 
 ![KanvasPlayer demo](assets/demo.gif)
 
-## What this actually is
+## What is this?
 
 Spotify's own desktop client shows these looping Canvas videos, but
 there's no public API for them and no way to surface them anywhere
