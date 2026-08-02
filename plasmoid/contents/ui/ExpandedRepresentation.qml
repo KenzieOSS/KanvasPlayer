@@ -599,6 +599,23 @@ PlasmaExtras.Representation {
                     textFormat: Text.PlainText
                 }
 
+                PlasmaComponents3.ToolButton { // Keep expanded open
+                    id: pinButton
+                    icon.name: checked ? "window-pin" : "window-unpin"
+                    checkable: true
+                    checked: false
+                    onCheckedChanged: root.hideOnWindowDeactivate = !checked
+                    Accessible.name: checked
+                        ? i18n("Stop keeping open when another window is focused")
+                        : i18n("Keep open when another window is focused")
+
+                    PlasmaComponents3.ToolTip {
+                        text: pinButton.checked
+                            ? i18nc("@info:tooltip", "Stop keeping open when another window is focused")
+                            : i18nc("@info:tooltip", "Keep open when another window is focused")
+                    }
+                }
+
                 PlasmaComponents3.ToolButton { // Playback Rate
                     id: playbackRateButton
                     Layout.minimumWidth: playbackRateMetricsButton.implicitWidth
