@@ -5,9 +5,11 @@ for the currently playing track in its expanded view, instead of static
 album art. Falls back to album art automatically for tracks that don't
 have a Canvas.
 
-![KanvasPlayer demo](assets/demo.gif)
+| ![Normal mode](assets/demo.gif) | ![Compact mode](assets/compact.png) |
+|:---:|:---:|
+| Normal mode | Compact mode |
 
-## What is this?
+## What this actually is
 
 Spotify's own desktop client shows these looping Canvas videos, but
 there's no public API for them and no way to surface them anywhere
@@ -28,8 +30,9 @@ file on disk:
 - **[`plasmoid/`](plasmoid)** - the frontend. A fork of KDE's own Media
   Player widget that overlays the fetched video on top of the normal
   album art whenever one is available, and falls back cleanly to plain
-  album art otherwise. Everything else about the widget - controls,
-  layout, system tray integration - is untouched upstream behavior.
+  album art otherwise. Has an optional **compact mode** (right-click →
+  Configure → Appearance) that shows the canvas video full-bleed with
+  the track info overlaid, instead of a separate box next to it.
 
 Neither side knows the other exists beyond that one file path
 (`~/.cache/kanvasd/current.mp4`). The widget doesn't know how the video
@@ -55,7 +58,7 @@ steps instead, or to see exactly what the installer is doing on your
 behalf before you run it.
 
 ## Disclaimer
-The flags that Spotify needs for this to work cause a minor security flaw, allowing any websocket to connect to Spotify's backend
+The flags that Spotify needs for this to work cause a minor security flaw, allwoing any websocket to connect to Spotify's backend
 Also this project is quite fragile a single update from Spotify changing stuff about how canvases work can break it at any moment
 
 ## Requirements
