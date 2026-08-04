@@ -36,6 +36,7 @@ PlasmaExtras.Representation {
     readonly property int controlSize: Kirigami.Units.iconSizes.medium
 
     readonly property bool softwareRendering: GraphicsInfo.api === GraphicsInfo.Software
+    readonly property bool compactMode: Plasmoid.configuration.compactMode
     readonly property var appletInterface: root
     property real rate: mpris2Model.currentPlayer?.rate ?? 1
     property double length: mpris2Model.currentPlayer?.length ?? 0
@@ -277,8 +278,9 @@ PlasmaExtras.Representation {
 
             anchors {
                 fill: parent
-                leftMargin: Kirigami.Units.gridUnit
-                rightMargin: Kirigami.Units.gridUnit
+                // 0 in compact mode: full-bleed video, no edge padding
+                leftMargin: expandedRepresentation.compactMode ? 0 : Kirigami.Units.gridUnit
+                rightMargin: expandedRepresentation.compactMode ? 0 : Kirigami.Units.gridUnit
             }
 
             AlbumArtStackView {
@@ -288,8 +290,8 @@ PlasmaExtras.Representation {
                     top: parent.top
                     bottom: parent.bottom
                     left: parent.left
-                    right: detailsColumn.visible ? parent.horizontalCenter : parent.right
-                    rightMargin: Kirigami.Units.gridUnit / 2
+                    right: (expandedRepresentation.compactMode || !detailsColumn.visible) ? parent.right : parent.horizontalCenter
+                    rightMargin: expandedRepresentation.compactMode ? 0 : Kirigami.Units.gridUnit / 2
                 }
 
                 Connections {
@@ -341,17 +343,38 @@ PlasmaExtras.Representation {
                 }
             }
 
+            // KanvasPlayer: dark bottom-fade so overlaid text stays legible
+            // over busy video/art in compact mode. Sits above the video,
+            // below the text (declared before detailsColumn).
+            Rectangle {
+                id: compactModeScrim
+                visible: expandedRepresentation.compactMode
+                anchors {
+                    left: albumArt.left
+                    right: albumArt.right
+                    bottom: albumArt.bottom
+                }
+                height: Math.min(albumArt.height, detailsColumn.implicitHeight + Kirigami.Units.gridUnit * 3)
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "transparent" }
+                    GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.75) }
+                }
+            }
+
             ColumnLayout { // Details Column
                 id: detailsColumn
                 anchors {
                     top: parent.top
                     bottom: parent.bottom
-                    left: parent.horizontalCenter
-                    leftMargin: Kirigami.Units.gridUnit / 2
-                    right: parent.right
+                    bottomMargin: expandedRepresentation.compactMode ? Kirigami.Units.gridUnit : 0
+                    left: expandedRepresentation.compactMode ? albumArt.left : parent.horizontalCenter
+                    leftMargin: expandedRepresentation.compactMode ? Kirigami.Units.gridUnit : Kirigami.Units.gridUnit / 2
+                    right: expandedRepresentation.compactMode ? albumArt.right : parent.right
+                    rightMargin: expandedRepresentation.compactMode ? Kirigami.Units.gridUnit : 0
                 }
                 visible: root.track.length > 0
 
+                // top+bottom always anchored - VerticalFit text needs a real height
                 Item {
                     Layout.fillHeight: true
                 }
@@ -405,8 +428,9 @@ PlasmaExtras.Representation {
                     Layout.maximumHeight: Kirigami.Units.gridUnit * 2
                 }
 
+                // collapsed in compact mode: pins text to bottom
                 Item {
-                    Layout.fillHeight: true
+                    Layout.fillHeight: !expandedRepresentation.compactMode
                 }
             }
         }
@@ -606,13 +630,13 @@ PlasmaExtras.Representation {
                     checked: false
                     onCheckedChanged: root.hideOnWindowDeactivate = !checked
                     Accessible.name: checked
-                        ? i18n("Keep Open")
-                        : i18n("Keep Open")
+                        ? i18n("Stop keeping open when another window is focused")
+                        : i18n("Keep open when another window is focused")
 
                     PlasmaComponents3.ToolTip {
                         text: pinButton.checked
-                            ? i18nc("@info:tooltip", "Keep Open")
-                            : i18nc("@info:tooltip", "Keep Open")
+                            ? i18nc("@info:tooltip", "Stop keeping open when another window is focused")
+                            : i18nc("@info:tooltip", "Keep open when another window is focused")
                     }
                 }
 
