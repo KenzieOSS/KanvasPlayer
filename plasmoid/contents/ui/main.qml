@@ -212,7 +212,4 @@ PlasmoidItem {
         id: mpris2Model
     }
 
-    Component.onCompleted: {
-        Plasmoid.removeInternalAction("configure");
-    }
 }
