@@ -5,9 +5,12 @@ for the currently playing track in its expanded view, instead of static
 album art. Falls back to album art automatically for tracks that don't
 have a Canvas.
 
-| ![Normal mode](assets/demo.gif) | ![Compact mode](assets/compact.png) |
-|:---:|:---:|
-| Normal mode | Compact mode |
+<table>
+<tr>
+<td align="center"><img src="assets/demo.gif" width="400"><br>Normal mode</td>
+<td align="center"><img src="assets/compact.png" width="400"><br>Compact mode</td>
+</tr>
+</table>
 
 ## What this actually is
 
