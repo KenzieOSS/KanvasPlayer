@@ -16,7 +16,7 @@
         ],
         "Icon": "applications-multimedia",
         "Id": "io.github.KenzieOSS.kanvasplayer",
-        "License": "GPL-2.0+",
+        "License": "GPL-3.0-only",
         "Name": "KanvasPlayer",
         "Website": "https://github.com/KenzieOSS/kanvasplayer"
     },
