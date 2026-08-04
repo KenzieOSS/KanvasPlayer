@@ -7,8 +7,8 @@ have a Canvas.
 
 <table>
 <tr>
-<td align="center"><img src="assets/demo.gif" width="400"><br>Normal mode</td>
-<td align="center"><img src="assets/compact.png" width="400"><br>Compact mode</td>
+<td align="center"><img src="assets/demo.gif" height="260"><br>Normal mode</td>
+<td align="center"><img src="assets/compact.png" height="260"><br>Compact mode</td>
 </tr>
 </table>
 
