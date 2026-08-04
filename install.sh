@@ -127,6 +127,14 @@ else
     kpackagetool6 -t Plasma/Applet -i "$REPO_DIR/plasmoid"
 fi
 
+# KSycoca caches applet metadata, including whether it has a config
+# interface at all - if an earlier install happened before contents/config/
+# existed, Plasma keeps serving that cached "no config" answer (no
+# "Configure..." entry in the right-click menu) even after -u updates the
+# files on disk, until sycoca is explicitly rebuilt. Same root cause as the
+# desktop-launcher cache issue below, hit by a real user during testing.
+command -v kbuildsycoca6 >/dev/null 2>&1 && kbuildsycoca6 --noincremental 2>/dev/null || true
+
 # ---------------------------------------------------------------------------
 # 6. Spotify --remote-debugging-port (needed by the token extractor)
 #
@@ -154,7 +162,7 @@ patch_spotify_desktop() {
     if [ "$kind" = "flatpak" ]; then
         # flatpak run passes extra args straight through to the app - insert
         # them right after the app id, before any @@ file-forwarding tokens.
-        sed -i -E "s/(com\.spotify\.Client)/\1 $SPOTIFY_FLAGS/" "$dest"
+        sed -i -E "s/(com\.spotify\.Client)/\1 -- $SPOTIFY_FLAGS/" "$dest"
     else
         # Native: insert before any %U/%u/%f/%F placeholder, else append.
         if grep -qE '%[UuFf]' "$dest"; then
