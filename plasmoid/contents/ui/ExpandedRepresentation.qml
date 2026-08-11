@@ -630,13 +630,13 @@ PlasmaExtras.Representation {
                     checked: false
                     onCheckedChanged: root.hideOnWindowDeactivate = !checked
                     Accessible.name: checked
-                        ? i18n("Stop keeping open when another window is focused")
-                        : i18n("Keep open when another window is focused")
+                        ? i18n("Keep open")
+                        : i18n("Keep open")
 
                     PlasmaComponents3.ToolTip {
                         text: pinButton.checked
-                            ? i18nc("@info:tooltip", "Stop keeping open when another window is focused")
-                            : i18nc("@info:tooltip", "Keep open when another window is focused")
+                            ? i18nc("@info:tooltip", "Keep open")
+                            : i18nc("@info:tooltip", "Keep open")
                     }
                 }
 
