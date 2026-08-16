@@ -119,6 +119,12 @@ class TokenManager:
 
 token_mgr = TokenManager()
 
+# Track id kanvasd currently considers "now playing". Updated synchronously
+# in on_properties_changed as soon as a track change is seen; checked at the
+# end of on_track_changed so a slower fetch for an older track can't clobber
+# current.mp4 after a newer track's fetch already finished (rapid-skip race).
+current_track_id = None
+
 
 def _touch(path: Path):
     """Bump mtime so LRU eviction treats this as recently used."""
@@ -163,7 +169,6 @@ async def fetch_canvas(track_id: str) -> Path | None:
         stdout, stderr = await proc.communicate()
 
         if proc.returncode == 0:
-            _evict_lru()
             return out_path
 
         if proc.returncode == 2:
@@ -173,7 +178,7 @@ async def fetch_canvas(track_id: str) -> Path | None:
                 continue
             return None
 
-        # Non-auth failure (e.g. no canvas for this track) - don't retry.
+        # non auth failure (e.g. no canvas for this track), don't retry
         print(f"[fetcher] failed (exit {proc.returncode}): "
               f"{stderr.decode(errors='replace').strip()}")
         return None
@@ -183,7 +188,20 @@ async def fetch_canvas(track_id: str) -> Path | None:
 
 async def on_track_changed(track_id: str):
     print(f"[track] {track_id}")
-    result = await fetch_canvas(track_id)
+    try:
+        result = await fetch_canvas(track_id)
+    except Exception as e:
+        # treat fetch failure (e.g. token error) as no canvas
+        print(f"[canvas] fetch failed for {track_id}: {e}")
+        result = None
+
+    if track_id != current_track_id:
+        # a newer track change superseded this one while fetching (rapid skip)
+        # don't let a stale result clobber current.mp4
+        print(f"[canvas] discarding stale result for {track_id} "
+              f"(now playing {current_track_id})")
+        return
+
     if result is None:
         print("[canvas] none available for this track")
         # Clear any previous track's canvas so the widget falls back to
@@ -196,6 +214,31 @@ async def on_track_changed(track_id: str):
         CURRENT_CANVAS.unlink()
     CURRENT_CANVAS.symlink_to(result)
     print(f"[canvas] ready -> {CURRENT_CANVAS}")
+
+
+heal_task: asyncio.Task | None = None
+
+
+async def self_heal_once(track_id: str):
+    """5s after a track starts, verify current.mp4 matches it, in case a
+    race (rapid skips, LRU eviction of the active file) left it wrong."""
+    await asyncio.sleep(5)
+
+    expected = CANVAS_DIR / f"{track_id}.mp4"
+
+    if expected.exists():
+        target = CURRENT_CANVAS.resolve() if CURRENT_CANVAS.is_symlink() else None
+        if target != expected.resolve():
+            print(f"[heal] current.mp4 out of sync for {track_id}, fixing")
+            if CURRENT_CANVAS.exists() or CURRENT_CANVAS.is_symlink():
+                CURRENT_CANVAS.unlink()
+            CURRENT_CANVAS.symlink_to(expected)
+        _touch(expected)  # protect from LRU eviction while actively playing
+    else:
+        # no cached canvas for this track, retry in case the earlier
+        # fetch failed transiently instead of it genuinely having none
+        print(f"[heal] re-checking canvas for {track_id}")
+        await on_track_changed(track_id)
 
 
 def extract_track_id_from_mpris(metadata: dict) -> str | None:
@@ -261,17 +304,18 @@ async def main():
     )
     props = proxy.get_interface("org.freedesktop.DBus.Properties")
 
-    last_track_id = None
-
     def on_properties_changed(interface_name, changed_props, invalidated_props):
-        nonlocal last_track_id
+        global current_track_id, heal_task
         if "Metadata" not in changed_props:
             return
         metadata = changed_props["Metadata"].value
         track_id = extract_track_id_from_mpris(metadata)
-        if track_id and track_id != last_track_id:
-            last_track_id = track_id
+        if track_id and track_id != current_track_id:
+            current_track_id = track_id
+            if heal_task is not None:
+                heal_task.cancel()
             asyncio.create_task(on_track_changed(track_id))
+            heal_task = asyncio.create_task(self_heal_once(track_id))
 
     props.on_properties_changed(on_properties_changed)
 
