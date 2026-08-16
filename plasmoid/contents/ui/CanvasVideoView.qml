@@ -75,7 +75,7 @@ Item {
         }
     }
 
-    // Pure data source - just lists current.mp4 if it exists, so we can
+    // Pure data source, just lists current.mp4 if it exists, so we can
     // read its existence/fileModified. Its own change signals are NOT
     // used as the reload trigger (see file header comment).
     FolderListModel {
