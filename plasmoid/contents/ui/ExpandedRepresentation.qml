@@ -374,7 +374,7 @@ PlasmaExtras.Representation {
                 }
                 visible: root.track.length > 0
 
-                // top+bottom always anchored - VerticalFit text needs a real height
+                // top+bottom always anchored, VerticalFit text needs a real height
                 Item {
                     Layout.fillHeight: true
                 }
