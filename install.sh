@@ -66,7 +66,7 @@ if command -v pkg-config >/dev/null 2>&1 && ! pkg-config --exists Qt6Multimedia 
 fi
 
 # ---------------------------------------------------------------------------
-# 2. Bun - has an official user-scoped installer, safe to run automatically
+# 2. Bun, has an official user-scoped installer, safe to run automatically
 # ---------------------------------------------------------------------------
 
 if ! command -v bun >/dev/null 2>&1; then
@@ -81,7 +81,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 3. kanvasd - venv + deps, unconditionally (simplest, works everywhere)
+# 3. kanvasd, venv + deps, unconditionally (simplest, works everywhere)
 # ---------------------------------------------------------------------------
 
 info "Installing kanvasd to $KANVASD_DIR..."
@@ -128,7 +128,7 @@ else
 fi
 
 # KSycoca caches applet metadata, including whether it has a config
-# interface at all - if an earlier install happened before contents/config/
+# interface at all. If an earlier install happened before contents/config/
 # existed, Plasma keeps serving that cached "no config" answer (no
 # "Configure..." entry in the right-click menu) even after -u updates the
 # files on disk, until sycoca is explicitly rebuilt. Same root cause as the
@@ -139,10 +139,10 @@ command -v kbuildsycoca6 >/dev/null 2>&1 && kbuildsycoca6 --noincremental 2>/dev
 # 6. Spotify --remote-debugging-port (needed by the token extractor)
 #
 # Patches a user-local COPY of Spotify's .desktop launcher (never the
-# system one) so launching Spotify normally - app launcher, taskbar,
-# whatever - includes the flags the token extractor needs. Detects native
-# vs Flatpak and inserts the flags in the right place for each. Idempotent:
-# safe to re-run, won't double-insert if already patched.
+# system one) so launching Spotify normally, whether from the app launcher,
+# taskbar, or anywhere else, includes the flags the token extractor needs.
+# Detects native vs Flatpak and inserts the flags in the right place for
+# each. Idempotent: safe to re-run, won't double-insert if already patched.
 # ---------------------------------------------------------------------------
 
 SPOTIFY_FLAGS="--remote-debugging-port=9222 --remote-allow-origins=*"
@@ -160,9 +160,9 @@ patch_spotify_desktop() {
     fi
 
     if [ "$kind" = "flatpak" ]; then
-        # flatpak run passes extra args straight through to the app - insert
+        # flatpak run passes extra args straight through to the app, insert
         # them right after the app id, before any @@ file-forwarding tokens.
-        sed -i -E "s/(com\.spotify\.Client)/\1 $SPOTIFY_FLAGS/" "$dest"
+        sed -i -E "s/(com\.spotify\.Client)/\1 -- $SPOTIFY_FLAGS/" "$dest"
     else
         # Native: insert before any %U/%u/%f/%F placeholder, else append.
         if grep -qE '%[UuFf]' "$dest"; then
@@ -181,7 +181,7 @@ patch_spotify_desktop() {
 
     update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
     # update-desktop-database only refreshes the generic XDG MIME/desktop
-    # association cache (what e.g. xdg-open uses) - Plasma's own launcher
+    # association cache (what e.g. xdg-open uses). Plasma's own launcher
     # (Kickoff/KRunner/taskbar) reads from KSycoca instead, which needs
     # its own explicit rebuild or it'll keep serving the old cached entry
     # even though the file on disk is already correctly patched.
@@ -244,9 +244,6 @@ if [ "$found_spotify" = false ]; then
     fi
 fi
 
-# ---------------------------------------------------------------------------
-# Done
-# ---------------------------------------------------------------------------
 
 echo
 info "Install complete."
